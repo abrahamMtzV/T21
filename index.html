@@ -14,7 +14,7 @@
 <nav class="navbar navbar-dark t21-navbar sticky-top">
   <div class="container-fluid px-3">
     <span class="navbar-brand d-flex align-items-center gap-2">
-      <img src="logo.jpg" alt="T21 Logo" height="44" class="logo-nav" />
+      <img src="logo.png" alt="T21 Logo" height="44" class="logo-nav" />
       <span class="brand-text">T21</span>
     </span>
     <div class="d-flex align-items-center gap-2">
@@ -30,7 +30,7 @@
 </nav>
 
 <header class="t21-hero text-center py-4">
-  <img src="logo.jpg" alt="T21" class="hero-logo mb-2 rounded" />
+  <img src="logo.png" alt="T21" class="hero-logo mb-2" />
   <p class="hero-slogan">Un antojo con propósito</p>
 </header>
 
@@ -68,9 +68,9 @@
     <div class="collapse show" id="colGomitas">
       <div class="t21-card-body">
         <div class="price-badges mb-3">
-          <span class="price-badge">Chica $15</span>
-          <span class="price-badge">Mediana $20</span>
-          <span class="price-badge">Grande $30</span>
+          <span class="price-badge" id="badgeChica">Chica $15</span>
+          <span class="price-badge" id="badgeMediana">Mediana $20</span>
+          <span class="price-badge" id="badgeGrande">Grande $30</span>
         </div>
         <div id="gomiList"></div>
         <button class="btn btn-outline-primary btn-sm mt-2 w-100" onclick="openAddFlavor()">
@@ -97,7 +97,7 @@
                 <span class="qty-val" id="paletaCerezaVal">0</span>
                 <button class="qty-btn" onclick="changeQty('paletaCereza',1)">+</button>
               </div>
-              <div class="small text-muted mt-1">$10 c/u</div>
+              <div class="small text-muted mt-1" id="pricePaletaCereza">$10 c/u</div>
             </div>
           </div>
           <div class="col-6">
@@ -109,7 +109,7 @@
                 <span class="qty-val" id="paletaSandiaVal">0</span>
                 <button class="qty-btn" onclick="changeQty('paletaSandia',1)">+</button>
               </div>
-              <div class="small text-muted mt-1">$10 c/u</div>
+              <div class="small text-muted mt-1" id="pricePaletaSandia">$10 c/u</div>
             </div>
           </div>
         </div>
@@ -189,6 +189,7 @@
 <div class="total-bar" id="totalBar">
   <div class="d-flex justify-content-between align-items-center mb-2">
     <span class="total-label">TOTAL</span>
+    <button class="btn btn-sm btn-outline-light opacity-75" onclick="clearCart()" title="Borrar carrito"><i class="bi bi-trash3"></i></button>
     <span class="total-amount" id="totalDisplay">$0.00</span>
   </div>
   <button class="btn btn-warning w-100 fw-bold btn-lg generate-btn" onclick="showTicketPreview()">
@@ -286,6 +287,22 @@
         <div class="input-group">
           <span class="input-group-text">$</span>
           <input type="number" class="form-control t21-input" id="configCharolaPrice" value="120" min="0" />
+
+        <label class="form-label fw-bold mt-3">Precio Gomita Chica</label>
+        <div class="input-group mb-2">
+          <span class="input-group-text">$</span>
+          <input type="number" class="form-control t21-input" id="configGomiChica" value="15" min="0" />
+        </div>
+        <label class="form-label fw-bold">Precio Gomita Mediana</label>
+        <div class="input-group mb-2">
+          <span class="input-group-text">$</span>
+          <input type="number" class="form-control t21-input" id="configGomiMediana" value="20" min="0" />
+        </div>
+        <label class="form-label fw-bold">Precio Gomita Grande</label>
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <input type="number" class="form-control t21-input" id="configGomiGrande" value="30" min="0" />
+        </div>
         </div>
       </div>
       <div class="modal-footer">
