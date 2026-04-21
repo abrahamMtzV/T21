@@ -116,10 +116,43 @@ body { font-family: 'Nunito', sans-serif; background: var(--light-bg); color: va
   .total-bar { left: 50%; transform: translateX(-50%); max-width: 700px; border-radius: 18px 18px 0 0; }
 }
 
+/* ── SWITCH — color visible en ON y OFF ──────────────────── */
+.form-check-input[type="checkbox"] {
+  border: 2px solid var(--red);
+  background-color: #fff;
+}
+.form-check-input[type="checkbox"]:checked {
+  background-color: var(--red);
+  border-color: var(--red);
+}
+.form-check-input[type="checkbox"]:focus {
+  box-shadow: 0 0 0 3px rgba(165,32,33,0.2);
+  border-color: var(--red);
+}
+
+/* ── IMPRESIÓN — formato ticket angosto, no hoja A4 ─────── */
 @media print {
-  body { background: #fff; }
-  .t21-navbar, .t21-hero, main, .toast-container, .total-bar { display: none !important; }
-  .modal { position: static !important; display: block !important; }
-  .modal-dialog { margin: 0; max-width: 100%; }
-  .modal-footer { display: none !important; }
+  @page {
+    size: 80mm auto;
+    margin: 0;
+  }
+  body * { visibility: hidden; }
+  #ticketContent, #ticketContent * { visibility: visible; }
+  #ticketContent {
+    position: fixed;
+    top: 0; left: 0;
+    width: 80mm;
+    font-size: 11px;
+  }
+  .ticket-top { padding: 12px 10px 10px; }
+  .ticket-logo { width: 48px; }
+  .ticket-title { font-size: 1.2rem; }
+  .ticket-section { padding: 5px 10px; }
+  .ticket-section h6 { font-size: 0.8rem; }
+  .ticket-row { font-size: 0.75rem; }
+  .ticket-divider { margin: 6px 10px; }
+  .ticket-total-bar { padding: 8px 10px; }
+  .ticket-total-label { font-size: 0.9rem; }
+  .ticket-total-amt { font-size: 1.2rem; }
+  .ticket-footer { font-size: 0.65rem; padding: 6px 10px 10px; }
 }
