@@ -9,7 +9,8 @@ const STATE = {
     'Aros de Sandía','Cubitos','Tiburones','Xtreme Frutas',
     'Xtremes Mora Azul','Viboritas','Naranja Gajos'
   ],
-  gomitas: {},
+  cartItems: [],      // [{ id, flavor, size, pres, qty, price }]
+  cartIdCounter: 0,
   paletas: { paletaCereza: 0, paletaSandia: 0 },
   salsa: 0,
   charolas: [],
@@ -23,6 +24,7 @@ const GOMI_PRICES = { get chica(){ return STATE.config.gomiChica; }, get mediana
 document.addEventListener('DOMContentLoaded', () => {
   loadConfig();
   updatePriceLabels();
+  renderGomitas();
   renderCharolas();
   setToday();
   adjustSpacer();
@@ -76,7 +78,6 @@ function updatePriceLabels() {
   if (bc) bc.textContent = 'Chica $'   + STATE.config.gomiChica;
   if (bm) bm.textContent = 'Mediana $' + STATE.config.gomiMediana;
   if (bg) bg.textContent = 'Grande $'  + STATE.config.gomiGrande;
-  renderGomitas();
 }
 function saveConfig() {
   STATE.config.webhookUrl   = document.getElementById('configWebhook').value.trim();
@@ -92,70 +93,135 @@ function saveConfig() {
   recalcTotal();
 }
 
-// ── GOMITAS ─────────────────────────────────────────────────
+// ── GOMITAS: SELECTOR + CARRITO ─────────────────────────────
 function renderGomitas() {
+  // Renderiza la lista de sabores como botones para agregar
   const container = document.getElementById('gomiList');
   container.innerHTML = '';
+
+  // Botones de sabor
+  const grid = document.createElement('div');
+  grid.className = 'flavor-grid mb-3';
   STATE.flavors.forEach((flavor, idx) => {
-    if (!STATE.gomitas[idx]) {
-      STATE.gomitas[idx] = {
-        chica:   { qty: 0, pres: 'chamoy' },
-        mediana: { qty: 0, pres: 'chamoy' },
-        grande:  { qty: 0, pres: 'chamoy' }
-      };
-    }
-    const g = STATE.gomitas[idx];
-    const row = document.createElement('div');
-    row.className = 'flavor-row fade-in';
-    row.id = `flavor-${idx}`;
-    row.innerHTML = `
-      <div class="d-flex align-items-center justify-content-between">
-        <div class="flavor-name"><span>🍬</span> ${flavor}</div>
-        <div>
-          <button class="btn-edit-flavor" onclick="openEditFlavor(${idx})">✏️</button>
-          <button class="btn-del-flavor"  onclick="deleteFlavor(${idx})">🗑️</button>
-        </div>
+    const btn = document.createElement('button');
+    btn.className = 'flavor-chip';
+    btn.innerHTML = `🍬 ${flavor}`;
+    btn.onclick = () => openAddToCart(idx);
+    // Botones editar/borrar en long-press o doble tap: se muestran en modal aparte
+    grid.appendChild(btn);
+  });
+  container.appendChild(grid);
+
+  // Carrito de gomitas
+  renderGomiCart();
+}
+
+function renderGomiCart() {
+  let cartEl = document.getElementById('gomiCartList');
+  if (!cartEl) {
+    cartEl = document.createElement('div');
+    cartEl.id = 'gomiCartList';
+    document.getElementById('gomiList').appendChild(cartEl);
+  }
+  cartEl.innerHTML = '';
+  if (STATE.cartItems.length === 0) {
+    cartEl.innerHTML = '<div class="text-muted small text-center py-2">Sin gomitas agregadas</div>';
+    return;
+  }
+  STATE.cartItems.forEach(item => {
+    const presLabel = item.pres === 'chamoy' ? '🌶️ Chamoy' : item.pres === 'escarchada' ? '🧂 Escarchada' : '🍬 Sola';
+    const sizeLabel = item.size.charAt(0).toUpperCase() + item.size.slice(1);
+    const div = document.createElement('div');
+    div.className = 'cart-item fade-in';
+    div.innerHTML = `
+      <div class="cart-item-info">
+        <span class="cart-item-name">${item.flavor}</span>
+        <span class="cart-item-detail">${sizeLabel} · ${presLabel}</span>
       </div>
-      ${['chica','mediana','grande'].map(size => `
-        <div class="gomita-sub">
-          <span class="size-label">${size.charAt(0).toUpperCase()+size.slice(1)} $${GOMI_PRICES[size]}</span>
-          <select class="pres-select form-select form-select-sm"
-                  onchange="gomiSetPres(${idx},'${size}',this.value); recalcTotal()">
-            <option value="chamoy"     ${g[size].pres==='chamoy'    ?'selected':''}>🌶️ Chamoy</option>
-            <option value="escarchada" ${g[size].pres==='escarchada'?'selected':''}>🧂 Escarchada</option>
-            <option value="sola"       ${g[size].pres==='sola'      ?'selected':''}>🍬 Sola</option>
-          </select>
-          <div class="qty-control">
-            <button class="qty-btn" onclick="gomiChangeQty(${idx},'${size}',-1)">−</button>
-            <span class="qty-val" id="gomi-${idx}-${size}">${g[size].qty}</span>
-            <button class="qty-btn" onclick="gomiChangeQty(${idx},'${size}',1)">+</button>
-          </div>
+      <div class="d-flex align-items-center gap-2">
+        <div class="qty-control">
+          <button class="qty-btn" onclick="cartChangeQty(${item.id},-1)">−</button>
+          <span class="qty-val">${item.qty}</span>
+          <button class="qty-btn" onclick="cartChangeQty(${item.id},1)">+</button>
         </div>
-      `).join('')}
+        <span class="cart-item-price">$${(item.qty * item.price).toFixed(2)}</span>
+        <button class="btn-del-flavor" onclick="cartRemove(${item.id})">🗑️</button>
+      </div>
     `;
-    container.appendChild(row);
+    cartEl.appendChild(div);
   });
 }
-function gomiSetPres(idx, size, val)    { STATE.gomitas[idx][size].pres = val; }
-function gomiChangeQty(idx, size, delta) {
-  const g = STATE.gomitas[idx][size];
-  g.qty = Math.max(0, g.qty + delta);
-  const el = document.getElementById(`gomi-${idx}-${size}`);
-  if (el) el.textContent = g.qty;
+
+function openAddToCart(flavorIdx) {
+  document.getElementById('addCartFlavorIdx').value = flavorIdx;
+  document.getElementById('addCartFlavorName').textContent = STATE.flavors[flavorIdx];
+  document.getElementById('sizeMediana').checked = true;
+  document.getElementById('presChamoy').checked  = true;
+  document.getElementById('addCartQty').textContent = '1';
+  document._addCartQtyVal = 1;
+  // Actualizar etiquetas de precios en el modal
+  document.getElementById('lblChica').textContent   = '$' + STATE.config.gomiChica;
+  document.getElementById('lblMediana').textContent = '$' + STATE.config.gomiMediana;
+  document.getElementById('lblGrande').textContent  = '$' + STATE.config.gomiGrande;
+  new bootstrap.Modal(document.getElementById('modalAddToCart')).show();
+}
+function addCartQtyChange(delta) {
+  document._addCartQtyVal = Math.max(1, (document._addCartQtyVal || 1) + delta);
+  document.getElementById('addCartQty').textContent = document._addCartQtyVal;
+}
+function confirmAddToCart() {
+  const idx   = parseInt(document.getElementById('addCartFlavorIdx').value);
+  const size  = document.querySelector('input[name="addCartSize"]:checked')?.value || 'mediana';
+  const pres  = document.querySelector('input[name="addCartPres"]:checked')?.value || 'chamoy';
+  const qty   = document._addCartQtyVal || 1;
+  const price = GOMI_PRICES[size];
+  STATE.cartItems.push({ id: ++STATE.cartIdCounter, flavor: STATE.flavors[idx], size, pres, qty, price });
+  bootstrap.Modal.getInstance(document.getElementById('modalAddToCart')).hide();
+  renderGomiCart();
+  recalcTotal();
+  showToast('🍬 Agregado al carrito');
+}
+function cartChangeQty(id, delta) {
+  const item = STATE.cartItems.find(i => i.id === id);
+  if (!item) return;
+  item.qty = Math.max(1, item.qty + delta);
+  renderGomiCart();
+  recalcTotal();
+}
+function cartRemove(id) {
+  STATE.cartItems = STATE.cartItems.filter(i => i.id !== id);
+  renderGomiCart();
   recalcTotal();
 }
 
 // ── CRUD SABORES ─────────────────────────────────────────────
-function openAddFlavor() {
+function openManageFlavors() {
+  renderManageFlavors();
+  new bootstrap.Modal(document.getElementById('modalManageFlavors')).show();
+}
+function renderManageFlavors() {
+  const list = document.getElementById('manageFlavorslist');
+  list.innerHTML = '';
+  STATE.flavors.forEach((flavor, idx) => {
+    const div = document.createElement('div');
+    div.className = 'd-flex align-items-center justify-content-between py-2 border-bottom';
+    div.innerHTML = `
+      <span class="fw-bold">🍬 ${flavor}</span>
+      <div>
+        <button class="btn-edit-flavor" onclick="openEditFlavor(${idx})">✏️</button>
+        <button class="btn-del-flavor"  onclick="deleteFlavor(${idx})">🗑️</button>
+      </div>`;
+    list.appendChild(div);
+  });
   document.getElementById('newFlavorName').value = '';
-  new bootstrap.Modal(document.getElementById('modalAddFlavor')).show();
 }
 function confirmAddFlavor() {
   const name = document.getElementById('newFlavorName').value.trim();
   if (!name) return;
   STATE.flavors.push(name);
-  bootstrap.Modal.getInstance(document.getElementById('modalAddFlavor')).hide();
-  renderGomitas(); recalcTotal();
+  renderGomitas();
+  renderManageFlavors();
+  recalcTotal();
 }
 function openEditFlavor(idx) {
   document.getElementById('editFlavorIndex').value = idx;
@@ -169,16 +235,14 @@ function confirmEditFlavor() {
   STATE.flavors[idx] = name;
   bootstrap.Modal.getInstance(document.getElementById('modalEditFlavor')).hide();
   renderGomitas();
+  renderManageFlavors();
 }
 function deleteFlavor(idx) {
   if (!confirm(`¿Eliminar el sabor "${STATE.flavors[idx]}"?`)) return;
   STATE.flavors.splice(idx, 1);
-  const newG = {};
-  STATE.flavors.forEach((_, i) => {
-    newG[i] = STATE.gomitas[i] || { chica:{qty:0,pres:'chamoy'}, mediana:{qty:0,pres:'chamoy'}, grande:{qty:0,pres:'chamoy'} };
-  });
-  STATE.gomitas = newG;
-  renderGomitas(); recalcTotal();
+  renderGomitas();
+  renderManageFlavors();
+  recalcTotal();
 }
 
 // ── PALETAS & SALSA ──────────────────────────────────────────
@@ -263,10 +327,7 @@ function charolaSetField(i, field, val) {
 // ── TOTAL ────────────────────────────────────────────────────
 function calcTotal() {
   let total = 0;
-  STATE.flavors.forEach((_, idx) => {
-    const g = STATE.gomitas[idx]; if (!g) return;
-    ['chica','mediana','grande'].forEach(size => { total += g[size].qty * GOMI_PRICES[size]; });
-  });
+  STATE.cartItems.forEach(item => { total += item.qty * item.price; });
   total += STATE.paletas.paletaCereza * STATE.config.paletaPrice;
   total += STATE.paletas.paletaSandia  * STATE.config.paletaPrice;
   const salsaPrice = parseFloat(document.getElementById('salsaPrice').value) || 0;
@@ -309,15 +370,12 @@ function buildTicketHTML() {
 
   // Gomitas
   let gomiRows = '';
-  STATE.flavors.forEach((flavor, idx) => {
-    const g = STATE.gomitas[idx]; if (!g) return;
-    ['chica','mediana','grande'].forEach(size => {
-      if (g[size].qty > 0) {
-        hasItems = true;
-        const sub = g[size].qty * GOMI_PRICES[size]; total += sub;
-        gomiRows += `<div class="ticket-row"><span class="item">${g[size].qty}x ${flavor} (${size}) – ${g[size].pres==='chamoy'?'🌶️ Chamoy':g[size].pres==='escarchada'?'🧂 Escarchada':'🍬 Sola'}</span><span class="price">$${sub.toFixed(2)}</span></div>`;
-      }
-    });
+  STATE.cartItems.forEach(item => {
+    hasItems = true;
+    const sub = item.qty * item.price; total += sub;
+    const presLabel = item.pres==='chamoy'?'🌶️ Chamoy':item.pres==='escarchada'?'🧂 Escarchada':'🍬 Sola';
+    const sizeLabel = item.size.charAt(0).toUpperCase()+item.size.slice(1);
+    gomiRows += `<div class="ticket-row"><span class="item">${item.qty}x ${item.flavor} (${sizeLabel}) – ${presLabel}</span><span class="price">$${sub.toFixed(2)}</span></div>`;
   });
   if (gomiRows) rows += `<div class="ticket-section"><h6>🍬 Gomitas</h6>${gomiRows}</div><hr class="ticket-divider">`;
 
@@ -403,13 +461,9 @@ async function sendToSheets() {
   const total      = calcTotal();
   const now        = new Date();
 
-  const gomiSummary = [];
-  STATE.flavors.forEach((flavor, idx) => {
-    const g = STATE.gomitas[idx]; if (!g) return;
-    ['chica','mediana','grande'].forEach(size => {
-      if (g[size].qty > 0) gomiSummary.push(`${g[size].qty}x ${flavor} (${size}, ${g[size].pres})`);
-    });
-  });
+  const gomiSummary = STATE.cartItems.map(item =>
+    `${item.qty}x ${item.flavor} (${item.size}, ${item.pres})`
+  );
 
   const payload = {
     fecha_venta:      now.toISOString(),
@@ -457,9 +511,7 @@ async function sendToSheets() {
 // ── NUEVA VENTA ──────────────────────────────────────────────
 function clearCart() {
   if (!confirm("¿Borrar todos los productos del carrito?")) return;
-  STATE.flavors.forEach((_, idx) => {
-    STATE.gomitas[idx] = { chica:{qty:0,pres:"chamoy"}, mediana:{qty:0,pres:"chamoy"}, grande:{qty:0,pres:"chamoy"} };
-  });
+  STATE.cartItems = [];
   STATE.paletas.paletaCereza = 0; document.getElementById("paletaCerezaVal").textContent = "0";
   STATE.paletas.paletaSandia  = 0; document.getElementById("paletaSandiaVal").textContent  = "0";
   STATE.salsa = 0; document.getElementById("salsaVal").textContent = "0";
@@ -476,9 +528,7 @@ function newSale() {
   document.getElementById('deliveryTime').value    = '';
   document.getElementById('deliveryAddress').value = '';
   setToday();
-  STATE.flavors.forEach((_, idx) => {
-    STATE.gomitas[idx] = { chica:{qty:0,pres:'chamoy'}, mediana:{qty:0,pres:'chamoy'}, grande:{qty:0,pres:'chamoy'} };
-  });
+  STATE.cartItems = [];
   STATE.paletas.paletaCereza = 0; document.getElementById('paletaCerezaVal').textContent = '0';
   STATE.paletas.paletaSandia  = 0; document.getElementById('paletaSandiaVal').textContent  = '0';
   STATE.salsa = 0; document.getElementById('salsaVal').textContent = '0';

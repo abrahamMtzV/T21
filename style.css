@@ -164,3 +164,95 @@ body { font-family: 'Nunito', sans-serif; background: var(--light-bg); color: va
   .ticket-total-amt { font-size: 1.1rem; }
   .ticket-footer { font-size: 0.62rem; padding: 5px 8px 8px; }
 }
+
+/* ── CHIPS DE SABOR ──────────────────────────────────────── */
+.flavor-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.flavor-chip {
+  background: #fff9f0;
+  border: 1.5px solid var(--border);
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--red);
+  cursor: pointer;
+  transition: background .15s, border-color .15s, transform .1s;
+  font-family: 'Nunito', sans-serif;
+}
+.flavor-chip:hover {
+  background: var(--yellow);
+  border-color: var(--yellow-dark);
+  transform: scale(1.04);
+}
+.flavor-chip:active { transform: scale(0.97); }
+
+/* ── ITEMS DEL CARRITO ───────────────────────────────────── */
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff9f0;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+.cart-item-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.cart-item-name {
+  font-weight: 800;
+  color: var(--red);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cart-item-detail {
+  font-size: 0.78rem;
+  color: var(--muted);
+  font-weight: 600;
+}
+.cart-item-price {
+  font-weight: 800;
+  color: var(--red);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+/* ── MODAL CARRITO ───────────────────────────────────────── */
+.cart-modal-flavor {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.3rem;
+  color: var(--red);
+  text-align: center;
+  padding: 8px;
+  background: #fff9f0;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+}
+/* Radio buttons estilo T21 */
+.btn-check:checked + .btn-outline-danger {
+  background-color: var(--red);
+  border-color: var(--red);
+  color: #fff;
+}
+.btn-outline-danger {
+  border-color: var(--border);
+  color: var(--text);
+  font-weight: 700;
+  font-family: 'Nunito', sans-serif;
+}
+.btn-outline-danger:hover {
+  background-color: #fff0f0;
+  border-color: var(--red);
+  color: var(--red);
+}
