@@ -324,7 +324,7 @@
         <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Configuración</h5>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
-      <div class="modal-body">
+      <div class="modal-body" style="max-height:70vh; overflow-y:auto">
         <label class="form-label fw-bold">
           <i class="bi bi-plug-fill me-1 text-warning"></i>Webhook URL de Make
         </label>
@@ -358,7 +358,6 @@
           <input type="number" class="form-control t21-input" id="configGomiGrande" value="30" min="0" />
         </div>
         </div>
-      </div>
       <div class="modal-footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
         <button class="btn btn-warning fw-bold" onclick="saveConfig()">
