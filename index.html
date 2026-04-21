@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>T21 – Un Antojo con Propósito</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<nav class="navbar navbar-dark t21-navbar sticky-top">
+  <div class="container-fluid px-3">
+    <span class="navbar-brand d-flex align-items-center gap-2">
+      <img src="logo.jpg" alt="T21 Logo" height="44" class="logo-nav" />
+      <span class="brand-text">T21</span>
+    </span>
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge cart-badge" id="cartTotal">$0.00</span>
+      <button class="btn btn-outline-light btn-sm" onclick="openConfig()">
+        <i class="bi bi-gear-fill"></i>
+      </button>
+      <button class="btn btn-warning btn-sm fw-bold" onclick="showTicketPreview()">
+        <i class="bi bi-receipt me-1"></i>Ticket
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="t21-hero text-center py-4">
+  <img src="logo.jpg" alt="T21" class="hero-logo mb-2 rounded" />
+  <p class="hero-slogan">Un antojo con propósito</p>
+</header>
+
+<main class="container-fluid px-3">
+
+  <section class="t21-card mb-4">
+    <div class="t21-card-header"><i class="bi bi-person-fill me-2"></i>Datos del Cliente</div>
+    <div class="t21-card-body">
+      <div class="mb-3">
+        <label class="form-label fw-bold">Nombre del Cliente</label>
+        <input type="text" class="form-control t21-input" id="clientName" placeholder="ej. María García" />
+      </div>
+      <div class="row g-2">
+        <div class="col-6">
+          <label class="form-label fw-bold">Fecha de Entrega</label>
+          <input type="date" class="form-control t21-input" id="deliveryDate" />
+        </div>
+        <div class="col-6">
+          <label class="form-label fw-bold">Hora Deseada</label>
+          <input type="time" class="form-control t21-input" id="deliveryTime" />
+        </div>
+      </div>
+      <div class="mt-3">
+        <label class="form-label fw-bold">Dirección de Entrega</label>
+        <textarea class="form-control t21-input" id="deliveryAddress" rows="2" placeholder="Calle, Número, Colonia, Ciudad…"></textarea>
+      </div>
+    </div>
+  </section>
+
+  <section class="t21-card mb-4">
+    <div class="t21-card-header">
+      <i class="bi bi-emoji-smile-fill me-2"></i>Gomitas
+      <button class="btn btn-sm btn-outline-light ms-auto" data-bs-toggle="collapse" data-bs-target="#colGomitas"><i class="bi bi-chevron-down"></i></button>
+    </div>
+    <div class="collapse show" id="colGomitas">
+      <div class="t21-card-body">
+        <div class="price-badges mb-3">
+          <span class="price-badge">Chica $15</span>
+          <span class="price-badge">Mediana $20</span>
+          <span class="price-badge">Grande $30</span>
+        </div>
+        <div id="gomiList"></div>
+        <button class="btn btn-outline-primary btn-sm mt-2 w-100" onclick="openAddFlavor()">
+          <i class="bi bi-plus-circle me-1"></i>Agregar sabor
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="t21-card mb-4">
+    <div class="t21-card-header">
+      <i class="bi bi-snow2 me-2"></i>Paletas Enchiladas
+      <button class="btn btn-sm btn-outline-light ms-auto" data-bs-toggle="collapse" data-bs-target="#colPaletas"><i class="bi bi-chevron-down"></i></button>
+    </div>
+    <div class="collapse show" id="colPaletas">
+      <div class="t21-card-body">
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="paleta-card text-center">
+              <div class="paleta-emoji">🍒</div>
+              <div class="fw-bold mb-2">Cereza</div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="changeQty('paletaCereza',-1)">−</button>
+                <span class="qty-val" id="paletaCerezaVal">0</span>
+                <button class="qty-btn" onclick="changeQty('paletaCereza',1)">+</button>
+              </div>
+              <div class="small text-muted mt-1">$10 c/u</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="paleta-card text-center">
+              <div class="paleta-emoji">🍉</div>
+              <div class="fw-bold mb-2">Sandía</div>
+              <div class="qty-control">
+                <button class="qty-btn" onclick="changeQty('paletaSandia',-1)">−</button>
+                <span class="qty-val" id="paletaSandiaVal">0</span>
+                <button class="qty-btn" onclick="changeQty('paletaSandia',1)">+</button>
+              </div>
+              <div class="small text-muted mt-1">$10 c/u</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="t21-card mb-4">
+    <div class="t21-card-header">
+      <i class="bi bi-grid-3x3-gap-fill me-2"></i>Charolas
+      <button class="btn btn-sm btn-outline-light ms-auto" data-bs-toggle="collapse" data-bs-target="#colCharolas"><i class="bi bi-chevron-down"></i></button>
+    </div>
+    <div class="collapse show" id="colCharolas">
+      <div class="t21-card-body">
+        <div id="charolaList"></div>
+        <button class="btn btn-outline-primary btn-sm mt-2 w-100" onclick="addCharola()">
+          <i class="bi bi-plus-circle me-1"></i>Agregar charola
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="t21-card mb-4">
+    <div class="t21-card-header">
+      <i class="bi bi-fire me-2"></i>Salsa Macha
+      <button class="btn btn-sm btn-outline-light ms-auto" data-bs-toggle="collapse" data-bs-target="#colSalsa"><i class="bi bi-chevron-down"></i></button>
+    </div>
+    <div class="collapse show" id="colSalsa">
+      <div class="t21-card-body">
+        <div class="row g-2 align-items-center">
+          <div class="col-5">
+            <label class="form-label fw-bold mb-1">Botecitos</label>
+            <div class="qty-control">
+              <button class="qty-btn" onclick="changeQty('salsa',-1)">−</button>
+              <span class="qty-val" id="salsaVal">0</span>
+              <button class="qty-btn" onclick="changeQty('salsa',1)">+</button>
+            </div>
+          </div>
+          <div class="col-7">
+            <label class="form-label fw-bold mb-1">Precio por botecito</label>
+            <div class="input-group">
+              <span class="input-group-text">$</span>
+              <input type="number" class="form-control t21-input" id="salsaPrice" value="60" min="0" onchange="recalcTotal()" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="t21-card mb-4">
+    <div class="t21-card-header"><i class="bi bi-bicycle me-2"></i>Envío</div>
+    <div class="t21-card-body">
+      <div class="row g-2 align-items-center">
+        <div class="col-6">
+          <div class="form-check form-switch mt-1">
+            <input class="form-check-input" type="checkbox" id="envioToggle" onchange="recalcTotal()" />
+            <label class="form-check-label fw-bold" for="envioToggle">¿Incluir envío?</label>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="input-group">
+            <span class="input-group-text">$</span>
+            <input type="number" class="form-control t21-input" id="envioPrice" value="50" min="0" onchange="recalcTotal()" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Espaciador dinámico: se ajusta al alto real del total-bar -->
+  <div id="totalSpacer"></div>
+
+</main>
+
+<!-- TOTAL BAR FIJO -->
+<div class="total-bar" id="totalBar">
+  <div class="d-flex justify-content-between align-items-center mb-2">
+    <span class="total-label">TOTAL</span>
+    <span class="total-amount" id="totalDisplay">$0.00</span>
+  </div>
+  <button class="btn btn-warning w-100 fw-bold btn-lg generate-btn" onclick="showTicketPreview()">
+    <i class="bi bi-receipt me-2"></i>Generar Ticket
+  </button>
+</div>
+
+<!-- MODAL: AGREGAR SABOR -->
+<div class="modal fade" id="modalAddFlavor" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content t21-modal">
+      <div class="modal-header t21-modal-header">
+        <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Nuevo Sabor</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="text" class="form-control t21-input" id="newFlavorName" placeholder="Nombre del sabor" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-warning fw-bold" onclick="confirmAddFlavor()">Agregar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: EDITAR SABOR -->
+<div class="modal fade" id="modalEditFlavor" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content t21-modal">
+      <div class="modal-header t21-modal-header">
+        <h5 class="modal-title"><i class="bi bi-pencil me-2"></i>Editar Sabor</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editFlavorIndex" />
+        <input type="text" class="form-control t21-input" id="editFlavorName" placeholder="Nombre del sabor" />
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-warning fw-bold" onclick="confirmEditFlavor()">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: TICKET -->
+<div class="modal fade" id="modalTicket" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content t21-modal">
+      <div class="modal-header t21-modal-header">
+        <h5 class="modal-title"><i class="bi bi-receipt me-2"></i>Ticket de Venta</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div id="ticketContent" class="ticket-paper"></div>
+      </div>
+      <div class="modal-footer flex-wrap gap-2">
+        <button class="btn btn-outline-secondary" onclick="printTicket()">
+          <i class="bi bi-printer me-1"></i>Imprimir
+        </button>
+        <button class="btn btn-success" id="btnSaveSheets" onclick="sendToSheets()">
+          <i class="bi bi-cloud-upload me-1"></i>Guardar en Sheets
+        </button>
+        <button class="btn btn-warning fw-bold" onclick="newSale()">
+          <i class="bi bi-plus-circle me-1"></i>Nueva Venta
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: CONFIGURACIÓN -->
+<div class="modal fade" id="modalConfig" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content t21-modal">
+      <div class="modal-header t21-modal-header">
+        <h5 class="modal-title"><i class="bi bi-gear me-2"></i>Configuración</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <label class="form-label fw-bold">
+          <i class="bi bi-plug-fill me-1 text-warning"></i>Webhook URL de Make
+        </label>
+        <input type="url" class="form-control t21-input mb-1" id="configWebhook" placeholder="https://hook.make.com/xxxxxxxx" />
+        <div class="form-text mb-3">Pega aquí el URL del webhook de Make para enviar ventas a Google Sheets.</div>
+
+        <label class="form-label fw-bold">Precio Paleta (c/u)</label>
+        <div class="input-group mb-3">
+          <span class="input-group-text">$</span>
+          <input type="number" class="form-control t21-input" id="configPaletaPrice" value="10" min="0" />
+        </div>
+
+        <label class="form-label fw-bold">Precio Charola (c/u)</label>
+        <div class="input-group">
+          <span class="input-group-text">$</span>
+          <input type="number" class="form-control t21-input" id="configCharolaPrice" value="120" min="0" />
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button class="btn btn-warning fw-bold" onclick="saveConfig()">
+          <i class="bi bi-floppy-fill me-1"></i>Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:9999">
+  <div id="appToast" class="toast align-items-center text-white border-0" role="alert">
+    <div class="d-flex">
+      <div class="toast-body" id="toastMsg">¡Listo!</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

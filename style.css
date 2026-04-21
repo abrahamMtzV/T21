@@ -1,0 +1,125 @@
+/* ============================================================
+   T21 — Un Antojo con Propósito | style.css
+============================================================ */
+:root {
+  --yellow: #f4c84d;
+  --yellow-dark: #d9a800;
+  --red: #a52021;
+  --red-dark: #7a1718;
+  --red-light: #c0282a;
+  --white: #ffffff;
+  --light-bg: #fff8f0;
+  --card-bg: #ffffff;
+  --text: #2d1a1a;
+  --muted: #7a6060;
+  --border: #f0d8c0;
+  --shadow: 0 4px 18px rgba(165,32,33,0.10);
+  --radius: 18px;
+  --radius-sm: 10px;
+}
+* { box-sizing: border-box; }
+body { font-family: 'Nunito', sans-serif; background: var(--light-bg); color: var(--text); min-height: 100vh; }
+
+.t21-navbar { background: var(--red) !important; box-shadow: 0 2px 12px rgba(165,32,33,0.3); }
+.brand-text { font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: var(--yellow); letter-spacing: 1px; }
+.logo-nav { border-radius: 8px; filter: drop-shadow(0 0 4px rgba(244,200,77,0.5)); }
+.cart-badge { background: var(--yellow); color: var(--red); font-size: 0.95rem; font-weight: 800; padding: 6px 12px; border-radius: 20px; }
+
+.t21-hero { background: linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%); padding: 28px 16px 20px; position: relative; overflow: hidden; }
+.t21-hero::before { content:''; position:absolute; top:-40px; right:-40px; width:160px; height:160px; background:rgba(244,200,77,0.10); border-radius:50%; }
+.t21-hero::after  { content:''; position:absolute; bottom:-30px; left:-30px; width:110px; height:110px; background:rgba(244,200,77,0.07); border-radius:50%; }
+.hero-logo { width: 100px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25)); animation: popIn .6s cubic-bezier(.34,1.56,.64,1) both; }
+.hero-slogan { font-family: 'Fredoka One', cursive; color: var(--yellow); font-size: 1.1rem; letter-spacing: 0.5px; margin: 0; text-shadow: 0 2px 6px rgba(0,0,0,0.2); }
+
+.t21-card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; border: 1.5px solid var(--border); }
+.t21-card-header { background: linear-gradient(90deg, var(--red) 0%, var(--red-light) 100%); color: var(--white); font-family: 'Fredoka One', cursive; font-size: 1.05rem; padding: 12px 16px; display: flex; align-items: center; }
+.t21-card-header .btn-outline-light { border-color: rgba(255,255,255,0.5); padding: 2px 8px; }
+.t21-card-body { padding: 16px; }
+
+.t21-input { border: 2px solid var(--border); border-radius: var(--radius-sm); font-family: 'Nunito', sans-serif; font-weight: 600; transition: border-color .2s; }
+.t21-input:focus { border-color: var(--yellow-dark); box-shadow: 0 0 0 3px rgba(244,200,77,0.25); }
+
+.price-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.price-badge { background: var(--yellow); color: var(--red); font-weight: 800; font-size: 0.8rem; padding: 4px 12px; border-radius: 20px; border: 2px solid var(--yellow-dark); }
+
+.flavor-row { background: #fff9f0; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; transition: box-shadow .2s; }
+.flavor-row:hover { box-shadow: 0 2px 10px rgba(165,32,33,0.10); }
+.flavor-name { font-weight: 800; color: var(--red); font-size: 0.95rem; display: flex; align-items: center; gap: 6px; }
+.gomita-sub { display: grid; grid-template-columns: auto 1fr auto; gap: 8px; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px dashed var(--border); }
+.gomita-sub .size-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); min-width: 60px; }
+.gomita-sub .pres-select { font-size: 0.82rem; padding: 4px 6px; border: 1.5px solid var(--border); border-radius: 8px; background: #fff; font-family: 'Nunito', sans-serif; font-weight: 600; }
+.gomita-sub .pres-select:focus { border-color: var(--yellow-dark); box-shadow: 0 0 0 2px rgba(244,200,77,0.25); outline: none; }
+
+.qty-control { display: flex; align-items: center; gap: 6px; }
+.qty-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--red); background: #fff; color: var(--red); font-size: 1.1rem; font-weight: 900; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: background .15s, color .15s; flex-shrink: 0; }
+.qty-btn:hover { background: var(--red); color: #fff; }
+.qty-val { min-width: 30px; text-align: center; font-weight: 800; font-size: 1.05rem; color: var(--text); }
+
+.paleta-card { background: linear-gradient(135deg, #fff3d6 0%, #fff8ec 100%); border: 2px solid var(--yellow); border-radius: var(--radius); padding: 16px 8px; }
+.paleta-emoji { font-size: 2.2rem; margin-bottom: 6px; }
+
+.charola-row { background: #fff9f0; border: 1.5px solid var(--border); border-radius: var(--radius-sm); padding: 12px; margin-bottom: 10px; }
+.charola-row .charola-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.charola-num { font-family: 'Fredoka One', cursive; color: var(--red); font-size: 1rem; }
+
+/* ── TOTAL BAR — clave: padding-bottom seguro para iPhone y Android ── */
+.total-bar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--red);
+  padding: 12px 16px 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+  box-shadow: 0 -4px 20px rgba(165,32,33,0.3);
+  z-index: 1040;
+}
+.total-label { font-family: 'Fredoka One', cursive; color: rgba(255,255,255,0.75); font-size: 1rem; letter-spacing: 2px; }
+.total-amount { font-family: 'Fredoka One', cursive; color: var(--yellow); font-size: 1.8rem; }
+.generate-btn { border-radius: 14px; font-family: 'Fredoka One', cursive; font-size: 1.1rem; letter-spacing: 0.5px; color: var(--red); background: var(--yellow); border: none; box-shadow: 0 4px 12px rgba(244,200,77,0.4); transition: transform .15s, box-shadow .15s; }
+.generate-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(244,200,77,0.5); color: var(--red); }
+
+.t21-modal { border-radius: var(--radius); overflow: hidden; border: none; }
+.t21-modal-header { background: var(--red); color: #fff; border: none; }
+.t21-modal-header .modal-title { font-family: 'Fredoka One', cursive; }
+
+.ticket-paper { background: #fff; font-family: 'Nunito', sans-serif; }
+.ticket-top { background: var(--red); color: #fff; text-align: center; padding: 20px 16px 16px; }
+.ticket-logo { width: 70px; margin-bottom: 8px; }
+.ticket-title { font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: var(--yellow); }
+.ticket-slogan { font-size: 0.82rem; opacity: .85; }
+.ticket-divider { border: none; border-top: 2px dashed #ddd; margin: 10px 16px; }
+.ticket-section { padding: 8px 16px; }
+.ticket-section h6 { font-family: 'Fredoka One', cursive; color: var(--red); font-size: 0.95rem; margin-bottom: 6px; border-bottom: 1.5px solid var(--border); padding-bottom: 4px; }
+.ticket-row { display: flex; justify-content: space-between; font-size: 0.88rem; padding: 2px 0; }
+.ticket-row .item { color: var(--text); }
+.ticket-row .price { font-weight: 800; color: var(--red); }
+.ticket-total-bar { background: var(--red); color: #fff; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; margin: 10px 0 0; }
+.ticket-total-label { font-family: 'Fredoka One', cursive; font-size: 1.1rem; letter-spacing: 1px; }
+.ticket-total-amt { font-family: 'Fredoka One', cursive; font-size: 1.6rem; color: var(--yellow); }
+.ticket-footer { text-align: center; padding: 10px 16px 14px; font-size: 0.78rem; color: var(--muted); }
+
+#appToast { border-radius: var(--radius-sm); }
+
+.btn-edit-flavor { background: none; border: none; color: var(--yellow-dark); padding: 2px 6px; border-radius: 6px; cursor: pointer; }
+.btn-del-flavor  { background: none; border: none; color: #dc3545; padding: 2px 6px; border-radius: 6px; cursor: pointer; }
+.btn-edit-flavor:hover { background: rgba(244,200,77,0.2); }
+.btn-del-flavor:hover  { background: rgba(220,53,69,0.1); }
+
+@keyframes popIn  { 0% { transform: scale(0.7); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in { animation: fadeIn .3s ease both; }
+
+@media (min-width: 768px) {
+  main { max-width: 700px; margin: 0 auto; }
+  .t21-hero { padding: 36px 24px 28px; }
+  .hero-logo { width: 130px; }
+  .hero-slogan { font-size: 1.3rem; }
+  .total-bar { left: 50%; transform: translateX(-50%); max-width: 700px; border-radius: 18px 18px 0 0; }
+}
+
+@media print {
+  body { background: #fff; }
+  .t21-navbar, .t21-hero, main, .toast-container, .total-bar { display: none !important; }
+  .modal { position: static !important; display: block !important; }
+  .modal-dialog { margin: 0; max-width: 100%; }
+  .modal-footer { display: none !important; }
+}
