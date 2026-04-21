@@ -134,25 +134,33 @@ body { font-family: 'Nunito', sans-serif; background: var(--light-bg); color: va
 @media print {
   @page {
     size: 80mm auto;
-    margin: 0;
+    margin: 4mm;
   }
-  body * { visibility: hidden; }
-  #ticketContent, #ticketContent * { visibility: visible; }
-  #ticketContent {
-    position: fixed;
-    top: 0; left: 0;
+  html, body {
     width: 80mm;
-    font-size: 11px;
+    margin: 0;
+    padding: 0;
+    background: #fff !important;
   }
-  .ticket-top { padding: 12px 10px 10px; }
-  .ticket-logo { width: 48px; }
-  .ticket-title { font-size: 1.2rem; }
-  .ticket-section { padding: 5px 10px; }
-  .ticket-section h6 { font-size: 0.8rem; }
-  .ticket-row { font-size: 0.75rem; }
-  .ticket-divider { margin: 6px 10px; }
-  .ticket-total-bar { padding: 8px 10px; }
-  .ticket-total-label { font-size: 0.9rem; }
-  .ticket-total-amt { font-size: 1.2rem; }
-  .ticket-footer { font-size: 0.65rem; padding: 6px 10px 10px; }
+  body > *:not(#printArea) { display: none !important; }
+  #printArea {
+    display: block !important;
+    width: 100%;
+  }
+  .ticket-paper {
+    width: 100%;
+    box-shadow: none !important;
+  }
+  .ticket-top { padding: 10px 8px 8px; }
+  .ticket-logo { width: 44px; }
+  .ticket-title { font-size: 1.1rem; }
+  .ticket-slogan { font-size: 0.72rem; }
+  .ticket-section { padding: 4px 8px; }
+  .ticket-section h6 { font-size: 0.78rem; margin-bottom: 3px; padding-bottom: 2px; }
+  .ticket-row { font-size: 0.72rem; padding: 1px 0; }
+  .ticket-divider { margin: 4px 8px; }
+  .ticket-total-bar { padding: 7px 8px; }
+  .ticket-total-label { font-size: 0.85rem; }
+  .ticket-total-amt { font-size: 1.1rem; }
+  .ticket-footer { font-size: 0.62rem; padding: 5px 8px 8px; }
 }

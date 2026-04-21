@@ -378,7 +378,17 @@ function buildTicketHTML() {
     <div class="ticket-footer">Gracias por tu antojo 🍬 · T21<br>Generado el ${fmtD(now)} a las ${fmtT(now)}</div>
   `;
 }
-function printTicket() { window.print(); }
+function printTicket() {
+  // Crea un div fuera del modal para imprimir limpio
+  let area = document.getElementById("printArea");
+  if (area) area.remove();
+  area = document.createElement("div");
+  area.id = "printArea";
+  area.innerHTML = document.getElementById("ticketContent").innerHTML;
+  document.body.appendChild(area);
+  window.print();
+  setTimeout(() => area.remove(), 1000);
+}
 
 // ── ENVIAR A MAKE / GOOGLE SHEETS ────────────────────────────
 async function sendToSheets() {
