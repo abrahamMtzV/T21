@@ -14,15 +14,15 @@ const STATE = {
   salsa: 0,
   charolas: [],
   charolaIdCounter: 0,
-  config: { webhookUrl: '', paletaPrice: 10, charolaPrice: 120 }
+  config: { webhookUrl: '', paletaPrice: 10, charolaPrice: 120, gomiChica: 15, gomiMediana: 20, gomiGrande: 30 }
 };
 
-const GOMI_PRICES = { chica: 15, mediana: 20, grande: 30 };
+const GOMI_PRICES = { get chica(){ return STATE.config.gomiChica; }, get mediana(){ return STATE.config.gomiMediana; }, get grande(){ return STATE.config.gomiGrande; } };
 
 // ── INIT ────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   loadConfig();
-  renderGomitas();
+  updatePriceLabels();
   renderCharolas();
   setToday();
   adjustSpacer();
@@ -45,23 +45,48 @@ function setToday() {
 
 // ── CONFIGURACIÓN ───────────────────────────────────────────
 function loadConfig() {
-  const saved = localStorage.getItem('t21_config');
-  if (saved) Object.assign(STATE.config, JSON.parse(saved));
+  // Solo el webhook se guarda en localStorage — los precios siempre vienen del código
+  const savedWebhook = localStorage.getItem('t21_webhook');
+  if (savedWebhook) STATE.config.webhookUrl = savedWebhook;
   document.getElementById('configWebhook').value      = STATE.config.webhookUrl;
   document.getElementById('configPaletaPrice').value  = STATE.config.paletaPrice;
   document.getElementById('configCharolaPrice').value = STATE.config.charolaPrice;
+  document.getElementById('configGomiChica').value    = STATE.config.gomiChica;
+  document.getElementById('configGomiMediana').value  = STATE.config.gomiMediana;
+  document.getElementById('configGomiGrande').value   = STATE.config.gomiGrande;
 }
 function openConfig() {
   document.getElementById('configWebhook').value      = STATE.config.webhookUrl;
   document.getElementById('configPaletaPrice').value  = STATE.config.paletaPrice;
   document.getElementById('configCharolaPrice').value = STATE.config.charolaPrice;
+  document.getElementById('configGomiChica').value    = STATE.config.gomiChica;
+  document.getElementById('configGomiMediana').value  = STATE.config.gomiMediana;
+  document.getElementById('configGomiGrande').value   = STATE.config.gomiGrande;
   new bootstrap.Modal(document.getElementById('modalConfig')).show();
+}
+function updatePriceLabels() {
+  const p = STATE.config.paletaPrice;
+  const el1 = document.getElementById('pricePaletaCereza');
+  const el2 = document.getElementById('pricePaletaSandia');
+  if (el1) el1.textContent = '$' + p + ' c/u';
+  if (el2) el2.textContent = '$' + p + ' c/u';
+  const bc = document.getElementById('badgeChica');
+  const bm = document.getElementById('badgeMediana');
+  const bg = document.getElementById('badgeGrande');
+  if (bc) bc.textContent = 'Chica $'   + STATE.config.gomiChica;
+  if (bm) bm.textContent = 'Mediana $' + STATE.config.gomiMediana;
+  if (bg) bg.textContent = 'Grande $'  + STATE.config.gomiGrande;
+  renderGomitas();
 }
 function saveConfig() {
   STATE.config.webhookUrl   = document.getElementById('configWebhook').value.trim();
   STATE.config.paletaPrice  = parseFloat(document.getElementById('configPaletaPrice').value) || 10;
   STATE.config.charolaPrice = parseFloat(document.getElementById('configCharolaPrice').value) || 120;
-  localStorage.setItem('t21_config', JSON.stringify(STATE.config));
+  STATE.config.gomiChica    = parseFloat(document.getElementById('configGomiChica').value)    || 15;
+  STATE.config.gomiMediana  = parseFloat(document.getElementById('configGomiMediana').value)  || 20;
+  STATE.config.gomiGrande   = parseFloat(document.getElementById('configGomiGrande').value)   || 30;
+  localStorage.setItem('t21_webhook', STATE.config.webhookUrl);
+  updatePriceLabels();
   bootstrap.Modal.getInstance(document.getElementById('modalConfig')).hide();
   showToast('✅ Configuración guardada');
   recalcTotal();
@@ -98,6 +123,7 @@ function renderGomitas() {
                   onchange="gomiSetPres(${idx},'${size}',this.value); recalcTotal()">
             <option value="chamoy"     ${g[size].pres==='chamoy'    ?'selected':''}>🌶️ Chamoy</option>
             <option value="escarchada" ${g[size].pres==='escarchada'?'selected':''}>🧂 Escarchada</option>
+            <option value="sola"       ${g[size].pres==='sola'      ?'selected':''}>🍬 Sola</option>
           </select>
           <div class="qty-control">
             <button class="qty-btn" onclick="gomiChangeQty(${idx},'${size}',-1)">−</button>
@@ -289,7 +315,7 @@ function buildTicketHTML() {
       if (g[size].qty > 0) {
         hasItems = true;
         const sub = g[size].qty * GOMI_PRICES[size]; total += sub;
-        gomiRows += `<div class="ticket-row"><span class="item">${g[size].qty}x ${flavor} (${size}) – ${g[size].pres==='chamoy'?'🌶️ Chamoy':'🧂 Escarchada'}</span><span class="price">$${sub.toFixed(2)}</span></div>`;
+        gomiRows += `<div class="ticket-row"><span class="item">${g[size].qty}x ${flavor} (${size}) – ${g[size].pres==='chamoy'?'🌶️ Chamoy':g[size].pres==='escarchada'?'🧂 Escarchada':'🍬 Sola'}</span><span class="price">$${sub.toFixed(2)}</span></div>`;
       }
     });
   });
@@ -419,6 +445,20 @@ async function sendToSheets() {
 }
 
 // ── NUEVA VENTA ──────────────────────────────────────────────
+function clearCart() {
+  if (!confirm("¿Borrar todos los productos del carrito?")) return;
+  STATE.flavors.forEach((_, idx) => {
+    STATE.gomitas[idx] = { chica:{qty:0,pres:"chamoy"}, mediana:{qty:0,pres:"chamoy"}, grande:{qty:0,pres:"chamoy"} };
+  });
+  STATE.paletas.paletaCereza = 0; document.getElementById("paletaCerezaVal").textContent = "0";
+  STATE.paletas.paletaSandia  = 0; document.getElementById("paletaSandiaVal").textContent  = "0";
+  STATE.salsa = 0; document.getElementById("salsaVal").textContent = "0";
+  STATE.charolas = [];
+  document.getElementById("envioToggle").checked = false;
+  renderGomitas(); renderCharolas(); recalcTotal();
+  showToast("🗑️ Carrito vaciado");
+}
+
 function newSale() {
   if (!confirm('¿Iniciar nueva venta? Se limpiarán todos los datos.')) return;
   bootstrap.Modal.getInstance(document.getElementById('modalTicket')).hide();
