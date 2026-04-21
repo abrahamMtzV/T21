@@ -15,7 +15,7 @@ const STATE = {
   salsa: 0,
   charolas: [],
   charolaIdCounter: 0,
-  config: { webhookUrl: '', paletaPrice: 10, charolaPrice: 120, gomiChica: 15, gomiMediana: 20, gomiGrande: 30 }
+  config: { webhookUrl: '', paletaPrice: 15, charolaPrice: 75, gomiChica: 15, gomiMediana: 20, gomiGrande: 30 }
 };
 
 const GOMI_PRICES = { get chica(){ return STATE.config.gomiChica; }, get mediana(){ return STATE.config.gomiMediana; }, get grande(){ return STATE.config.gomiGrande; } };
