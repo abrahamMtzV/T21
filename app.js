@@ -416,7 +416,7 @@ function buildTicketHTML() {
 
   return `
     <div class="ticket-top">
-      <img src="logo.png" alt="T21" class="ticket-logo" />
+      <img src="logo.jpg" alt="T21" class="ticket-logo rounded" />
       <div class="ticket-title">T21</div>
       <div class="ticket-slogan">Un antojo con propósito</div>
     </div>
