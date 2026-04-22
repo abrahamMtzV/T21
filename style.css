@@ -256,3 +256,14 @@ body { font-family: 'Nunito', sans-serif; background: var(--light-bg); color: va
   border-color: var(--red);
   color: var(--red);
 }
+
+
+/* ── Títulos de sección en modal Config ─── */
+.config-section-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-bottom: 10px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--border);
+}
