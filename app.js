@@ -38,6 +38,19 @@ const GOMI_PRICES = {
   get grande()  { return STATE.config.gomiGrande;  }
 };
 
+// Precios especiales por sabor (sobreescriben el precio por tamaño)
+const SPECIAL_PRICES = {
+  'Xtreme Frutas':    { chica: 25, mediana: 28 },
+  'Xtremes Mora Azul':{ chica: 25, mediana: 28 }
+};
+
+function getGomiPrice(flavor, size) {
+  if (SPECIAL_PRICES[flavor] && SPECIAL_PRICES[flavor][size] !== undefined) {
+    return SPECIAL_PRICES[flavor][size];
+  }
+  return GOMI_PRICES[size];
+}
+
 /* ── PERSISTENCIA LOCAL ──────────────────────────────────── */
 const LS_KEY = 't21_v3';
 
@@ -288,9 +301,10 @@ function openAddToCart(idx) {
   q('presChamoy').checked  = true;
   q('addCartQty').textContent = '1';
   document._addCartQtyVal = 1;
-  q('lblChica').textContent   = '$' + STATE.config.gomiChica;
-  q('lblMediana').textContent = '$' + STATE.config.gomiMediana;
-  q('lblGrande').textContent  = '$' + STATE.config.gomiGrande;
+  const flavor = STATE.flavors[idx];
+q('lblChica').textContent   = '$' + getGomiPrice(flavor, 'chica');
+q('lblMediana').textContent = '$' + getGomiPrice(flavor, 'mediana');
+q('lblGrande').textContent  = '$' + getGomiPrice(flavor, 'grande');
   new bootstrap.Modal(q('modalAddToCart')).show();
 }
 
@@ -304,7 +318,7 @@ function confirmAddToCart() {
   const size  = document.querySelector('input[name="addCartSize"]:checked')?.value || 'mediana';
   const pres  = document.querySelector('input[name="addCartPres"]:checked')?.value || 'chamoy';
   const qty   = document._addCartQtyVal || 1;
-  STATE.cartItems.push({ id: ++STATE.cartIdCounter, flavor: STATE.flavors[idx], size, pres, qty, price: GOMI_PRICES[size] });
+  STATE.cartItems.push({ id: ++STATE.cartIdCounter, flavor: STATE.flavors[idx], size, pres, qty, price: getGomiPrice(STATE.flavors[idx], size) });
   bootstrap.Modal.getInstance(q('modalAddToCart')).hide();
   renderGomiCart(); recalcTotal(); saveLocal();
   showToast('🍬 Agregado al carrito');
